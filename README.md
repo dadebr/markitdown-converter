@@ -1,117 +1,119 @@
 # Markitdown Converter
 
-## Descrição
+## Description
 
-Conversor de arquivos para Markdown (.MD) utilizando a biblioteca markitdown. Este aplicativo oferece uma interface gráfica elegante em Tkinter para converter diversos formatos de arquivo em Markdown, com opções de conversão individual ou em lote.
+A file converter to Markdown (.MD) using the markitdown library. This application offers an elegant graphical interface in Tkinter to convert various file formats to Markdown, with individual or batch conversion options.
 
-## Objetivos do Projeto
+## Project Objectives
 
-- **Conversão Universal**: Transformar arquivos PDF, PPT, DOCX, JSON, TXT, CSV e XLSX em formato Markdown
-- **Interface Amigável**: Proporcionar uma experiência de usuário intuitiva com interface gráfica Tkinter
-- **Flexibilidade**: Permitir conversão individual ou em lote de arquivos
-- **Controle de Destino**: Possibilitar escolha do diretório de destino para os arquivos convertidos
-- **Monitoramento**: Fornecer logs detalhados através de terminal integrado na interface
-- **Eficiência**: Processar múltiplos formatos de forma rápida e confiável
+- **Universal Conversion**: Transform PDF, PPT, DOCX, JSON, TXT, CSV, and XLSX files to Markdown format
+- **User-Friendly Interface**: Provide an intuitive user experience with Tkinter graphical interface
+- **Flexibility**: Allow individual or batch file conversion
+- **Destination Control**: Enable selection of destination directory for converted files
+- **Monitoring**: Provide detailed logs through integrated terminal in the interface
+- **Efficiency**: Process multiple formats quickly and reliably
 
-## Funcionalidades Principais
+## Main Features
 
-### ✨ Formatos Suportados
-- **PDF** - Documentos Portable Document Format
-- **PPT/PPTX** - Apresentações PowerPoint
-- **DOCX** - Documentos Microsoft Word
-- **JSON** - Arquivos JavaScript Object Notation
-- **TXT** - Arquivos de texto simples
-- **CSV** - Arquivos Comma-Separated Values
-- **XLSX** - Planilhas Microsoft Excel
+### ✨ Supported Formats
 
-### 🛠️ Características da Interface
-- Interface gráfica intuitiva desenvolvida em Tkinter
-- Seleção de arquivos individuais ou múltiplos
-- Escolha de diretório de destino personalizado
-- Terminal integrado para visualização de logs em tempo real
-- Barra de progresso para acompanhamento da conversão
-- Tratamento de erros com mensagens informativas
+- **PDF** - Portable Document Format documents
+- **PPT/PPTX** - PowerPoint presentations
+- **DOCX** - Microsoft Word documents
+- **JSON** - JavaScript Object Notation files
+- **TXT** - Plain text files
+- **CSV** - Comma-Separated Values files
+- **XLSX** - Microsoft Excel spreadsheets
 
-## Pré-requisitos
+### 🛠️ Interface Features
+
+- Intuitive graphical interface developed in Tkinter
+- Individual or multiple file selection
+- Custom destination directory selection
+- Integrated terminal for real-time log viewing
+- Progress bar for conversion tracking
+- Error handling with informative messages
+
+## Prerequisites
 
 - Python 3.8+
-- Biblioteca `markitdown`
-- Biblioteca `tkinter` (geralmente incluída no Python)
-- Dependências adicionais conforme necessário para cada formato
+- `markitdown` library
+- `tkinter` library (usually included with Python)
+- Additional dependencies as needed for each format
 
-## Instalação
+## Installation
 
 ```bash
-# Clone o repositório
+# Clone the repository
 git clone https://github.com/dadebr/markitdown-converter.git
 
-# Entre no diretório do projeto
+# Enter the project directory
 cd markitdown-converter
 
-# Instale as dependências
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-## Uso
+## Usage
 
-### Execução da Aplicação
+### Running the Application
 
 ```bash
-# Execute o aplicativo
+# Run the application
 python main.py
 ```
 
-### Fluxo de Trabalho
+### Workflow
 
-1. **Seleção de Arquivos**: Escolha um ou múltiplos arquivos através da interface
-2. **Definição de Destino**: Selecione o diretório onde os arquivos .md serão salvos
-3. **Conversão**: Inicie o processo e acompanhe o progresso no terminal integrado
-4. **Resultados**: Acesse os arquivos convertidos no diretório especificado
+1. **File Selection**: Choose one or multiple files through the interface
+2. **Destination Setup**: Select the directory where .md files will be saved
+3. **Conversion**: Start the process and track progress in the integrated terminal
+4. **Results**: Access converted files in the specified directory
 
-## Estrutura do Projeto
+## Project Structure
 
 ```
 markitdown-converter/
-├── main.py              # Arquivo principal da aplicação
-├── converter/           # Módulos de conversão
+├── main.py              # Main application file
+├── converter/           # Conversion modules
 │   ├── __init__.py
 │   ├── file_converter.py
 │   └── batch_processor.py
-├── ui/                  # Interface do usuário
+├── ui/                  # User interface
 │   ├── __init__.py
 │   ├── main_window.py
 │   └── components/
-├── utils/               # Utilitários e helpers
+├── utils/               # Utilities and helpers
 │   ├── __init__.py
 │   ├── logger.py
 │   └── file_handler.py
-├── requirements.txt     # Dependências do projeto
-├── README.md           # Este arquivo
-└── LICENSE            # Licença do projeto
+├── requirements.txt     # Project dependencies
+├── README.md           # This file
+└── LICENSE            # Project license
 ```
 
-## Contribuição
+## Contributing
 
-Contribuições são bem-vindas! Por favor:
+Contributions are welcome! Please:
 
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+1. Fork the project
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## Licença
+## License
 
-Este projeto está licenciado sob a [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
-## Contato
+## Contact
 
-- **Desenvolvedor**: dadebr
-- **GitHub**: [https://github.com/dadebr](https://github.com/dadebr)
-- **Projeto**: [https://github.com/dadebr/markitdown-converter](https://github.com/dadebr/markitdown-converter)
+- Developer: dadebr
+- GitHub: [https://github.com/dadebr](https://github.com/dadebr)
+- Project: [https://github.com/dadebr/markitdown-converter](https://github.com/dadebr/markitdown-converter)
 
-## Agradecimentos
+## Acknowledgments
 
-- Biblioteca [markitdown](https://github.com/microsoft/markitdown) pela funcionalidade de conversão
-- Comunidade Python pela documentação e recursos
-- Todos os contribuidores que ajudam a melhorar este projeto
+- [markitdown](https://github.com/microsoft/markitdown) library for conversion functionality
+- Python community for documentation and resources
+- All contributors who help improve this project
