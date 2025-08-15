@@ -136,9 +136,61 @@ class FileConverter:
         
         return text.strip()
     
-
+    def _fix_duplicate_characters(self, text):
+        """Corrige caracteres duplicados e malformados."""
+        if not text:
+            return ""
+        
+        # Corrigir caracteres duplicados consecutivos (ex: 'ôônniibbuuss' -> 'ônibus')
+        text = re.sub(r'(.)\1{2,}', r'\1', text)
+        
+        # Corrigir padrões específicos de duplicação
+        text = re.sub(r'([aeiouáéíóúâêîôûàèìòùãõç])\1+', r'\1', text, flags=re.IGNORECASE)
+        
+        # Corrigir sequências malformadas comuns
+        text = re.sub(r'ccoomm', 'com', text, flags=re.IGNORECASE)
+        text = re.sub(r'lluuggaarreess', 'lugares', text, flags=re.IGNORECASE)
+        text = re.sub(r'ppeerrííooddoo', 'período', text, flags=re.IGNORECASE)
+        
+        return text
     
-
+    def _reconstruct_fragmented_words(self, text):
+        """Reconstrói palavras fragmentadas usando análise de contexto."""
+        if not text:
+            return ""
+        
+        # Dicionário de palavras comuns fragmentadas
+        word_fragments = {
+            r'\bREPÚ\s+BLICA\b': 'REPÚBLICA',
+            r'\bCONTROLA\s+DORIA\b': 'CONTROLADORIA',
+            r'\bCÓ\s+DIGO\b': 'CÓDIGO',
+            r'\bGESTÃO\s+DE\s+RECURSOS\s+HUMA\b': 'GESTÃO DE RECURSOS HUMANOS',
+            r'\bGESTÃO\s+DO\s+SUPRIMENTO\s+DE\s+B\b': 'GESTÃO DO SUPRIMENTO DE BENS',
+            r'\bCU\s+ÇÃO\b': 'CUÇÃO',
+            r'\bseguridade\s+soc\s+ial\b': 'seguridade social',
+            r'\bcontr\s+n\b': 'contrn',
+            r'\bNega\s+tiva\b': 'Negativa',
+            r'\bap\s+con\b': 'apcon',
+            r'\bor\s+encont\s+rava\b': 'or encontrava',
+            r'\bentanto\s+as\b': 'entanto as',
+            r'\batualização\s+tidões\b': 'atualização tidões',
+            r'\bivado\s+et\b': 'ivado et',
+            r'\btratada\s+seguridade\b': 'tratada seguridade',
+            r'\beixamos\s+ecedor\b': 'eixamos ecedor',
+            r'\bente\s+ava\s+ar\s+mento\b': 'ente ava ar mento',
+            r'\blaridade\s+onforme\b': 'laridade onforme',
+            r'\brico\s+ferente\b': 'rico ferente',
+            r'\bresa\s+ônibus\b': 'resa ônibus'
+        }
+        
+        # Aplicar correções de fragmentos
+        for pattern, replacement in word_fragments.items():
+            text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+        
+        # Corrigir fragmentação de palavras simples (letras isoladas)
+        text = re.sub(r'\b([a-záéíóúâêîôûàèìòùãõç])\s+([a-záéíóúâêîôûàèìòùãõç]{2,})\b', r'\1\2', text, flags=re.IGNORECASE)
+        
+        return text
     
     def _join_split_text(self, text):
         """Une texto dividido inadequadamente."""
@@ -227,110 +279,6 @@ class FileConverter:
         
         # Corrigir espaçamento final
         text = re.sub(r'\n{3,}', '\n\n', text)
-        
-        return text
-    
-    def _fix_duplicate_characters(self, text):
-        """Corrige caracteres duplicados de forma mais abrangente."""
-        if not text:
-            return ""
-        
-        # Corrigir pontuação duplicada específica
-        text = re.sub(r'\.{2,}', '.', text)  # Múltiplos pontos
-        text = re.sub(r',{2,}', ',', text)    # Múltiplas vírgulas
-        text = re.sub(r';{2,}', ';', text)    # Múltiplos ponto e vírgula
-        text = re.sub(r':{2,}', ':', text)    # Múltiplos dois pontos
-        text = re.sub(r'!{2,}', '!', text)    # Múltiplas exclamações
-        text = re.sub(r'\?{2,}', '?', text)   # Múltiplas interrogações
-        
-        # Corrigir hífen e traços duplicados
-        text = re.sub(r'-{3,}', '--', text)   # Múltiplos hífens para traço duplo
-        text = re.sub(r'_{3,}', '__', text)   # Múltiplos underscores
-        
-        # Corrigir espaços múltiplos (mais de 2)
-        text = re.sub(r' {3,}', ' ', text)
-        
-        # Corrigir quebras de linha múltiplas (mais de 2)
-        text = re.sub(r'\n{4,}', '\n\n\n', text)
-        
-        # Corrigir caracteres especiais duplicados
-        text = re.sub(r'\*{3,}', '**', text)  # Múltiplos asteriscos
-        text = re.sub(r'#{3,}', '##', text)   # Múltiplos hashtags
-        
-        return text
-    
-    def _fix_specific_fragments(self, text):
-        """Corrige fragmentos específicos identificados no PDF."""
-        if not text:
-            return ""
-        
-        # Correções específicas baseadas na análise do arquivo
-        specific_fixes = {
-            r'\bREPÚ\s+BLICA\b': 'REPÚBLICA',
-            r'\bCONTROLA\s+DORIA\b': 'CONTROLADORIA', 
-            r'\bGERAL\s+DA\s+UNIÃO\b': 'GERAL DA UNIÃO',
-            r'\bFEDERAL\s+DO\s+BRASIL\b': 'FEDERAL DO BRASIL',
-            r'\bMINISTÉRIO\s+DA\b': 'MINISTÉRIO DA',
-            r'\bSECRETARIA\s+DE\b': 'SECRETARIA DE',
-            r'\bDEPARTAMENTO\s+DE\b': 'DEPARTAMENTO DE'
-        }
-        
-        for pattern, replacement in specific_fixes.items():
-            text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
-        
-        return text
-    
-    def _format_headers_by_analysis(self, element):
-        """Detecta e formata cabeçalhos baseado em análise de características."""
-        if not hasattr(element, 'text') or not element.text:
-            return ""
-        
-        text = element.text.strip()
-        if not text:
-            return ""
-        
-        # Características que indicam cabeçalhos
-        is_header = False
-        header_level = 1
-        
-        # 1. Texto todo em maiúsculas e curto (provável título)
-        if text.isupper() and len(text) < 100 and len(text.split()) <= 10:
-            is_header = True
-            header_level = 1 if len(text) < 50 else 2
-        
-        # 2. Texto que começa com números (seções)
-        elif re.match(r'^\d+\.\s+[A-ZÁÉÍÓÚÂÊÎÔÛÀÈÌÒÙÃÕÇ]', text):
-            is_header = True
-            header_level = 2
-        
-        # 3. Texto que começa com letras (subseções)
-        elif re.match(r'^[a-z]\)\s+[A-ZÁÉÍÓÚÂÊÎÔÛÀÈÌÒÙÃÕÇ]', text):
-            is_header = True
-            header_level = 3
-        
-        # 4. Palavras-chave institucionais
-        institutional_keywords = [
-            'REPÚBLICA', 'CONTROLADORIA', 'MINISTÉRIO', 'SECRETARIA',
-            'DEPARTAMENTO', 'DIRETORIA', 'COORDENAÇÃO', 'GABINETE'
-        ]
-        if any(keyword in text.upper() for keyword in institutional_keywords) and len(text) < 150:
-            is_header = True
-            header_level = 1
-        
-        # 5. Texto centralizado ou com formatação especial (heurística)
-        if hasattr(element, 'metadata'):
-            metadata = element.metadata
-            # Verificar se há informações de fonte ou tamanho
-            if isinstance(metadata, dict):
-                font_size = metadata.get('font_size', 0)
-                if font_size > 12:  # Fonte maior que normal
-                    is_header = True
-                    header_level = 1 if font_size > 16 else 2
-        
-        # Formatar como cabeçalho se detectado
-        if is_header:
-            header_prefix = '#' * min(header_level, 6)
-            return f"{header_prefix} {text}"
         
         return text
     
@@ -440,37 +388,24 @@ class FileConverter:
         return '\n'.join(processed_content)
     
     def _extract_pdf_content_optimized(self, pdf_path, options):
-        """Extrai conteúdo do PDF de forma simples e eficaz."""
+        """Extrai conteúdo do PDF de forma otimizada preservando estrutura."""
         try:
             # Usar unstructured para extração principal
             elements = partition_pdf(str(pdf_path))
             self._log(f"Elementos extraídos do PDF: {len(elements)}", level='info')
             
-            # Processamento com detecção de cabeçalhos
-            markdown_content = ""
-            for element in elements:
-                if hasattr(element, 'text') and element.text:
-                    text = element.text.strip()
-                    if text:
-                        # Detectar e formatar cabeçalhos
-                        formatted_text = self._format_headers_by_analysis(element)
-                        markdown_content += formatted_text + "\n"
-            
+            # Processar elementos preservando estrutura e hierarquia
+            markdown_content = self._process_pdf_elements(elements)
             self._log(f"Conteúdo processado com {len(markdown_content.split())} palavras", level='info')
             
-            # Aplicar melhorias pontuais e testadas
+            # Pós-processamento melhorado
             if options.get('clean_text', True):
-                # Corrigir fragmentos específicos identificados
-                markdown_content = self._fix_specific_fragments(markdown_content)
-                
-                # Corrigir caracteres duplicados simples
-                markdown_content = self._fix_duplicate_characters(markdown_content)
-                
-                # Limpeza básica de formatação
-                markdown_content = re.sub(r'\n{3,}', '\n\n', markdown_content)
-                markdown_content = re.sub(r' {2,}', ' ', markdown_content)
+                markdown_content = self.clean_text(markdown_content)
             
-            # Extrair tabelas se solicitado
+            # Aplicar formatação de cabeçalhos após limpeza
+            markdown_content = self.detect_headings_and_format(markdown_content)
+            
+            # Extrair tabelas se solicitado (uma única abertura do PDF)
             if options.get('extract_tables', True):
                 tables = self._extract_tables_optimized(pdf_path)
                 if tables:
@@ -559,9 +494,11 @@ class FileConverter:
                         # Limpar texto da célula com melhorias
                         clean_cell = str(cell).strip()
                         
-                        # Limpeza básica da célula
-                        clean_cell = re.sub(r'\s+', ' ', clean_cell)
-                        clean_cell = re.sub(r'[.,;:!?]{2,}', lambda m: m.group(0)[0], clean_cell)
+                        # Corrigir caracteres duplicados na célula
+                        clean_cell = self._fix_duplicate_characters(clean_cell)
+                        
+                        # Reconstruir palavras fragmentadas na célula
+                        clean_cell = self._reconstruct_fragmented_words(clean_cell)
                         
                         # Normalizar espaçamento
                         clean_cell = re.sub(r'\s+', ' ', clean_cell)

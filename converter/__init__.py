@@ -14,9 +14,8 @@ GitHub: https://github.com/dadebr/markitdown-converter
 """
 
 from .file_converter import FileConverter
-from .batch_processor import BatchProcessor
 
 __version__ = "1.0.0"
 __author__ = "dadebr"
 __email__ = "dadebr@github.com"
-__all__ = ["FileConverter", "BatchProcessor"]
+__all__ = ["FileConverter"]
