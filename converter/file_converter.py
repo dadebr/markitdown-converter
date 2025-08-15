@@ -39,13 +39,25 @@ class FileConverter:
         '.csv': 'CSV File'
     }
     
-    def __init__(self):
+    def __init__(self, log_callback=None):
         """
-        Inicializa o conversor de arquivos
+        Inicializa o conversor de arquivos.
+        Args:
+            log_callback (function, optional): Função de callback para logs.
         """
-        self.logger = get_logger(__name__)
+        self.log_callback = log_callback
+        self.logger = get_logger(__name__) if log_callback is None else None
         self.file_handler = FileHandler()
         self.markitdown = MarkItDown()
+
+    def _log(self, message, level='info'):
+        """
+        Registra uma mensagem de log usando o callback ou o logger padrão.
+        """
+        if self.log_callback:
+            self.log_callback(message)
+        elif self.logger:
+            getattr(self.logger, level)(message)
         
     def is_supported_file(self, file_path: str) -> bool:
         """
@@ -89,13 +101,13 @@ class FileConverter:
             
             # Verificar se o arquivo existe
             if not input_file.exists():
-                self.logger.error(f"Arquivo não encontrado: {input_path}")
+                self._log(f"Arquivo não encontrado: {input_path}", level='error')
                 return None
                 
             # Verificar se o arquivo é suportado
             if not self.is_supported_file(input_path):
                 file_ext = input_file.suffix.lower()
-                self.logger.error(f"Formato não suportado: {file_ext}")
+                self._log(f"Formato não suportado: {file_ext}", level='error')
                 return None
             
             # Definir arquivo de saída se não especificado
@@ -107,7 +119,7 @@ class FileConverter:
             # Criar diretório de saída se necessário
             output_path.parent.mkdir(parents=True, exist_ok=True)
             
-            self.logger.info(f"Convertendo {input_file.name} ({self.get_file_type(input_path)})...")
+            self._log(f"Convertendo {input_file.name} ({self.get_file_type(input_path)})...")
             
             # Realizar a conversão
             try:
@@ -115,11 +127,11 @@ class FileConverter:
                 markdown_content = result.text_content
                 
                 if not markdown_content:
-                    self.logger.warning(f"Conteúdo vazio após conversão: {input_path}")
+                    self._log(f"Conteúdo vazio após conversão: {input_path}", level='warning')
                     return None
                     
             except Exception as e:
-                self.logger.error(f"Erro durante a conversão: {str(e)}")
+                self._log(f"Erro durante a conversão: {str(e)}", level='error')
                 return None
             
             # Salvar o arquivo markdown
@@ -127,15 +139,15 @@ class FileConverter:
                 with open(output_path, 'w', encoding='utf-8') as f:
                     f.write(markdown_content)
                     
-                self.logger.info(f"Arquivo convertido salvo em: {output_path}")
+                self._log(f"Arquivo convertido salvo em: {output_path}")
                 return str(output_path)
                 
             except Exception as e:
-                self.logger.error(f"Erro ao salvar arquivo: {str(e)}")
+                self._log(f"Erro ao salvar arquivo: {str(e)}", level='error')
                 return None
                 
         except Exception as e:
-            self.logger.error(f"Erro inesperado durante conversão: {str(e)}")
+            self._log(f"Erro inesperado durante conversão: {str(e)}", level='error')
             return None
     
     def get_conversion_info(self, file_path: str) -> Dict[str, Any]:

@@ -29,7 +29,7 @@ def main():
         logger.info("Iniciando Markitdown Converter...")
         
         # Criar e executar a aplicação
-        app = MarkitdownConverterApp()
+        app = MarkitdownConverterApp(logger)
         app.run()
         
     except Exception as e:
