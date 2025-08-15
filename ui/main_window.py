@@ -1,10 +1,13 @@
 import tkinter as tk
 from tkinter import filedialog, scrolledtext, ttk, messagebox
 import threading
+import os
+from converter.file_converter import FileConverter
 
 class MarkitdownConverterApp:
     def __init__(self, logger):
         self.logger = logger
+        self.file_converter = FileConverter(log_callback=self.log)
 
         self.root = tk.Tk()
         self.root.title("Markitdown Converter")
@@ -21,6 +24,10 @@ class MarkitdownConverterApp:
 
         btn_selecionar = ttk.Button(frame_selecao, text="Selecionar arquivos", command=self.selecionar_arquivos)
         btn_selecionar.pack(side="left", padx=5, pady=5)
+
+        btn_selecionar_pasta = ttk.Button(frame_selecao, text="Selecionar Pasta (Lote)", command=self.selecionar_pasta_origem)
+        btn_selecionar_pasta.pack(side="left", padx=5, pady=5)
+
         self.lbl_arquivos = ttk.Label(frame_selecao, text="Nenhum arquivo selecionado...")
         self.lbl_arquivos.pack(side="left", padx=5)
 
@@ -82,22 +89,44 @@ class MarkitdownConverterApp:
         if not self.arquivos or not self.destino:
             messagebox.showwarning("Aviso", "Selecione arquivos e diretório de saída.")
             return
-        from converter.file_converter import FileConverter
+
         self.progress.config(value=0, maximum=len(self.arquivos))
         for idx, arquivo in enumerate(self.arquivos, 1):
             try:
-                self.log(f"Convertendo: {arquivo}")
-                FileConverter.converter(arquivo, self.destino, self.log)
+                # A lógica de log agora está no FileConverter
+                self.file_converter.convert_file(arquivo, self.destino)
                 self.progress.config(value=idx)
             except Exception as e:
-                self.log(f"[ERRO] {arquivo}: {str(e)}")
+                self.log(f"[ERRO] Inesperado na UI: {arquivo}: {str(e)}")
         self.log("Conversão concluída.")
 
+    def selecionar_pasta_origem(self):
+        pasta_origem = filedialog.askdirectory(title="Selecione uma pasta para conversão em lote")
+        if not pasta_origem:
+            return
+
+        self.arquivos = []
+        supported_exts = self.file_converter.SUPPORTED_EXTENSIONS.keys()
+        for root, _, files in os.walk(pasta_origem):
+            for file in files:
+                if any(file.lower().endswith(ext) for ext in supported_exts):
+                    self.arquivos.append(os.path.join(root, file))
+
+        self.lbl_arquivos.config(text=f"{len(self.arquivos)} arquivo(s) encontrado(s) para lote.")
+        self.log(f"Pasta para lote selecionada: {pasta_origem} - {len(self.arquivos)} arquivos encontrados.")
+
     def converter_batch_thread(self):
-        threading.Thread(target=self.converter_batch).start()
+        # A conversão em lote agora usa a mesma lógica de conversão selecionada
+        # A diferença é como os arquivos são povoados (pela seleção de pasta)
+        if not self.arquivos:
+            messagebox.showwarning("Aviso", "Nenhum arquivo encontrado na pasta selecionada ou pasta não selecionada.")
+            return
+        self.converter_selecionado_thread()
 
     def converter_batch(self):
-        self.converter_selecionado()  # Aqui pode expandir para lógica em lote
+        # Este método não é mais diretamente necessário, pois a lógica foi unificada
+        # Mas mantemos para não quebrar o fluxo do botão que chama o thread
+        self.converter_selecionado()
 
     def run(self):
         self.root.mainloop()
